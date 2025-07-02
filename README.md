@@ -1,25 +1,18 @@
-﻿# 🔄 API Versioning & Keyed Services in .NET 9
+﻿# 🔄 API Versioning in .NET 9
 
 This project demonstrates how to implement **API Versioning** and **Keyed Services** in a controller-based ASP.NET Core Web API using **.NET 9**. It also integrates both **Swagger** and **Scalar** UIs to provide flexible, version-aware API documentation.
 
 ---
 
-## 🎯 Project Highlights
+## 🚀 Features & Highlights
 
-- ✅ Register and resolve multiple service implementations using `.AddKeyedSingleton()`
-- 🔢 Implement API versioning with [`Asp.Versioning.Mvc`](https://github.com/dotnet/aspnet-api-versioning)
-- 🌐 Provide both **Swagger** and **Scalar** UIs for exploring endpoints
-- 🧼 Maintain clean, versioned controller structure with flexible endpoint resolution
-
----
-
-## 🚀 Features
-
-- **.NET 9**: Built with the latest .NET 9 framework.
-- **API Versioning**: Multiple API versions using [Asp.Versioning.Mvc](https://github.com/dotnet/aspnet-api-versioning).
-- **OpenAPI**: Industry-standard specification for describing RESTful APIs in a machine-readable format. Learn more at [OpenAPI Specification](https://www.openapis.org).
-  - **Swagger**: Interactive API documentation with [Swashbuckle](https://github.com/domaindrivendev/Swashbuckle.AspNetCore).
-  - **Scalar**: Modern, customizable API reference UI with [Scalar](https://scalar.com/).
+- ✅ Built with **.NET 9** using controller-based architecture for version-aware APIs.
+- 🔑 Showcases **Keyed Services** with multiple `IEmployee` implementations using `.AddKeyedSingleton()`.
+- 🔢 Implements **API Versioning** via [`Asp.Versioning.Mvc`](https://github.com/dotnet/aspnet-api-versioning) with `[ApiVersion]` attributes and URL segment routing.
+- 📚 Leverages the [OpenAPI Specification](https://www.openapis.org) to generate interactive, versioned API documentation.
+- 🧭 Supports dual UI rendering via [Swagger UI](https://swagger.io) and [Scalar](https://scalar.com/) for modern API exploration.
+- 🛠️ Includes fail-fast startup validation with `ServiceValidator.cs` to ensure proper DI configuration.
+- ✨ Emphasizes clear structure, clean separation of concerns, and educational readability.
 
 ---
 
@@ -60,7 +53,7 @@ The current launch settings is configured to dynamically load one of the followi
 | HTTP                     | Swagger UI          |
 | HTTPS / IIS Express      | Scalar UI           |
 
-> **Tip:** You can change the launch profile by editing `Properties\launchSettings.json`.
+> **Tip:** You can change the launch profile by editing `Properties/launchSettings.json`.
 
 ---
 
@@ -79,32 +72,21 @@ The current launch settings is configured to dynamically load one of the followi
 
 ---
 
-## 📤 Key Concepts in Action
+## 🧠 Key Internals Explained
 
-- **Keyed Services**:
-    - The `IEmployee` interface is implemented by both `EmployeeRepository` and `TempEmployeeRepository`.
-    - Services are registered using `.AddKeyedSingleton()` and resolved in controllers via `[FromKeyedServices("key")]`, allowing precise injection based on the required implementation and API version.
-- **API Versioning**:
-    - Controllers are versioned using attributes like `[ApiVersion("1.0", Deprecated = true)]` for v1 and `[ApiVersion("2.0")]` for v2.
-    - The API version is specified in the URL using `UrlSegmentApiVersionReader`, enabling routes such as `/api/v1/...` and `/api/v2/...`.
-- **Swagger + Scalar**:
-    - Swagger documentation is generated and grouped by API version, accessible via `/swagger/index.html`.
-    - The Scalar UI is enabled only for HTTPS/IIS Express launch profiles, providing a modern, version-aware API reference experience. You can access it at `/scalar`.
+- **🔢 API Versioning & OpenAPI Documentation**  
 
----
+	API versioning is implemented using [`Asp.Versioning.Mvc`](https://github.com/dotnet/aspnet-api-versioning), which routes requests via `UrlSegmentApiVersionReader` (e.g., `/api/v1/...`) and annotates controllers using `[ApiVersion(...)]`. This version metadata flows into ASP.NET Core's API Explorer to generate OpenAPI documents, one per version, under `/openApi/{version}.json`. These specs are then rendered using [Swagger UI](https://swagger.io) and [Scalar](https://scalar.com/), providing interactive, version-aware API documentation.
 
-## 🔧 Key Components
+- **🔑 Keyed Service Injection**  
 
-- **🔢 API Versioning**  
-  Powered by [`Asp.Versioning.Mvc`](https://github.com/dotnet/aspnet-api-versioning), the project uses `UrlSegmentApiVersionReader` to route versioned requests (e.g., `/api/v1/...`, `/api/v2/...`). Controllers are annotated with `[ApiVersion]`, with v1 explicitly marked as deprecated.
-- **🔑 Keyed Services**  
-  The `IEmployee` abstraction is implemented by both `EmployeeRepository` and `TempEmployeeRepository`, registered via `.AddKeyedSingleton()`. Services are injected using `[FromKeyedServices("key")]`, enabling precise DI resolution per controller or API version.
-- **🧪 Service Validator**  
-  The `ServiceValidator` class is registered to ensure all required keyed services are resolved during application startup. This proactive check prevents misconfiguration and enforces a fail-fast pattern.
-- **📚 OpenAPI Support**  
-  OpenAPI documentation is generated using [Swashbuckle](https://github.com/domaindrivendev/Swashbuckle.AspNetCore), with UI rendering via both Swagger and [Scalar](https://scalar.com/). Endpoints are grouped by version and served from `/openApi/{version}.json`.
-- **🧱 Middleware & Pipeline**  
-  Centralized configuration via `Startup/Middleware.cs` handles routing, JSON formatting (PascalCase), error responses using `CustomProblemDetails`, and exposes detailed version-aware diagnostics in dev mode.
+ 	Both `EmployeeRepository` and `TempEmployeeRepository` implement `IEmployee`, and are registered as keyed singletons. They’re injected into versioned controllers using `[FromKeyedServices("key")]` enabling precise, version-specific DI resolution without conditionals.
+- **🧪 Fail-Fast Service Validation**  
+
+ 	Validates service resolution at startup using `ServiceValidator.cs` and `.ValidateOnBuild = true`, ensuring that missing or misconfigured dependencies are caught early with clear exceptions during `app.Build()`.
+- **🧱 Middleware & Formatting Pipeline**  
+
+ 	Middleware is organized via `Startup/IoC.cs` and `Startup/Middleware.cs`, which configures JSON serialization, basic exception handling with `CustomProblemDetails`, and developer-friendly diagnostics.
 
 ---
 
@@ -115,3 +97,6 @@ This project is designed to help developers explore advanced ASP.NET Core featur
 - 💡 Use it as a sandbox for experimentation
 - 🔍 Dive into version-aware controller patterns
 - 🛠️ Study the structure, middleware, and OpenAPI integration
+
+---
+**_🧭 Stay Curious. Build Thoughtfully._**
