@@ -18,8 +18,8 @@ public class KeyedServiceController : ControllerBase
 
 	[HttpGet ("employee")]
 	[ProducesResponseType<Response> (StatusCodes.Status200OK, "application/json")]
-	[EndpointSummary ("Get Employee")]
-	[EndpointDescription ("This endpoint get's the message from the Employee keyed service.")]
+	[EndpointSummary ("Get Employee Message")]
+	[EndpointDescription ("This endpoint gets the message from the Employee keyed service.")]
 	public IActionResult GetEmployee ()
 	{
 		var version = "v" + HttpContext.GetRequestedApiVersion ();
@@ -34,8 +34,8 @@ public class KeyedServiceController : ControllerBase
 
 	[HttpGet ("tempEmployee")]
 	[ProducesResponseType<Response[]> (StatusCodes.Status200OK, "application/json")]
-	[EndpointSummary ("Get Temporary Employee")]
-	[EndpointDescription ("This endpoint get's the message from the Temporary Employee keyed service.")]
+	[EndpointSummary ("Get Temporary Employee Message")]
+	[EndpointDescription ("This endpoint gets the message from the Temporary Employee keyed service.")]
 	public IActionResult GetTempEmployee ()
 	{
 		var version = "v" + HttpContext.GetRequestedApiVersion ();
@@ -50,8 +50,8 @@ public class KeyedServiceController : ControllerBase
 
 	[HttpGet ("both")]
 	[ProducesResponseType<Response[]> (StatusCodes.Status200OK, "application/json")]
-	[EndpointSummary ("Get Both")]
-	[EndpointDescription ("This endpoint get's the message from both Employee & Temporary Employee keyed services.")]
+	[EndpointSummary ("Get Messages from Both")]
+	[EndpointDescription ("This endpoint gets the message from both Employee & Temporary Employee keyed services.")]
 	public IActionResult GetBoth ()
 	{
 		var version = "v" + HttpContext.GetRequestedApiVersion ();

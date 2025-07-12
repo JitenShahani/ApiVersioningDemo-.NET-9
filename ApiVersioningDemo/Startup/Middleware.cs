@@ -41,7 +41,7 @@ public static class Middleware
 			app.UseSwaggerUI (options =>
 			{
 				// Add Document Title for Swagger UI
-				options.DocumentTitle = "Request Validation in Minimal APIs v1.";
+				options.DocumentTitle = "API Versioning Demo";
 
 				// Collapse all the tags & schema sections.
 				options.DocExpansion (DocExpansion.None);
@@ -87,7 +87,7 @@ public static class Middleware
 					.WithLayout (ScalarLayout.Modern)
 					.WithClientButton (false)
 					.WithTheme (ScalarTheme.BluePlanet)
-					.WithTitle ("Keyed Services Demo")
+					.WithTitle ("API Versioning Demo")
 					.WithDocumentDownloadType (DocumentDownloadType.Both)
 					.WithDefaultOpenAllTags (false)
 					.WithFavicon ("https://scalar.com/logo-light.svg")
@@ -103,7 +103,7 @@ public static class Middleware
 
 				// Define Scalar endpoints.
 				foreach (var description in versionList)
-					options.AddDocument ("Keyed Services Demo", description.Name, description.Url);
+					options.AddDocument ("API Versioning Demo", description.Name, description.Url);
 			});
 		}
 
