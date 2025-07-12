@@ -66,29 +66,29 @@ This repository demonstrates how to implement **API Versioning** and **Keyed Sin
 ApiVersioningDemo/
 ├── Controllers/
 │   ├── v1/
-│   │   └── KeyedServiceController.cs			v1 controller (deprecated)
+│   │   └── KeyedServiceController.cs		v1 controller (deprecated)
 │   ├── v2/
-│   │   └── KeyedServiceController.cs			v2 controller
-│   └── WeatherForecastController.cs			Version-neutral controller
+│   │   └── KeyedServiceController.cs		v2 controller
+│   └── WeatherForecastController.cs		Version-neutral controller
 ├── Dto/
-│   ├── Response.cs					DTO for API responses
-│   └── WeatherForecast.cs				DTO for Weather forecast
+│   ├── Response.cs				DTO for API responses
+│   └── WeatherForecast.cs			DTO for Weather forecast
 ├── MinimalEndpoints/
-│   ├── MyEndpoints.cs					Minimal Endpoints with both v1 & v2
+│   ├── MyEndpoints.cs				Minimal Endpoints with both v1 & v2
 ├── Services/
-│   ├── IEmployee.cs					Employee Service interface
-│   ├── EmployeeService.cs				Main Employee service
-│   ├── TempEmployeeService.cs				Temporary Employee service
-│   └── ServiceValidator.cs				Validates that all required keyed IEmployee services are registered at startup.
-│							This "dummy" service is injected with both `employeeRepo` and `tempEmployeeRepo` keyed services.
-│							This ensures the DI container throws an error during app build if any are missing or misconfigured.
-│							This provides early, fail-fast validation of your dependency injection setup.
+│   ├── IEmployee.cs				Employee Service interface
+│   ├── EmployeeService.cs			Main Employee service
+│   ├── TempEmployeeService.cs			Temporary Employee service
+│   └── ServiceValidator.cs			Validates that all required keyed IEmployee services are registered at startup.
+│						This "dummy" service is injected with both `employeeRepo` and `tempEmployeeRepo` keyed services.
+│						This ensures the DI container throws an error during app build if any are missing or misconfigured.
+│						This provides early, fail-fast validation of your dependency injection setup.
 ├── Startup/
-│   ├── IoC.cs						Dependency injection and service registration
-│   └── Middleware.cs					Middleware and pipeline config
-└── Swagger/						These classes are no longer used in this project but are included for future reference.
-    ├── ConfigureSwaggerOptions.cs			Swashbuckle/OpenAPI configuration
-    └── SwaggerDefaultValues.cs				Swashbuckle/OpenAPI operation filter
+│   ├── IoC.cs					Dependency injection and service registration
+│   └── Middleware.cs				Middleware and pipeline config
+└── Swagger/					These classes are no longer used in this project but are included for future reference.
+    ├── ConfigureSwaggerOptions.cs		Swashbuckle/OpenAPI configuration
+    └── SwaggerDefaultValues.cs			Swashbuckle/OpenAPI operation filter
 ```
 
 ## 🌐 Launch Profiles & UI Clients
