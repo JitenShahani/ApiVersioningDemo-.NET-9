@@ -1,16 +1,20 @@
-﻿namespace ApiVersioningDemo.Controllers.v1;
+﻿namespace ApiVersioningDemo.Controllers.V1;
 
 [ApiController]
 [Route ("api/v{version:apiVersion}/[controller]")]
+[ApiExplorerSettings (GroupName = "v1")]
 [ApiVersion ("1.0", Deprecated = true)]
-[Tags ("Keyed Services")]
 [Obsolete ("Deprecated")]
+[Tags ("Controller Endpoints")]
 public class KeyedServiceController : ControllerBase
 {
-	private readonly IEmployee _employeeRepository;
+	private readonly IEmployee _employeeService;
+	private readonly IEmployee _tempEmployeeService;
 
-	public KeyedServiceController ([FromKeyedServices ("employeeRepo")] IEmployee employeeRepository) =>
-		_employeeRepository = employeeRepository;
+	public KeyedServiceController (
+			[FromKeyedServices ("employeeService")] IEmployee employeeService,
+			[FromKeyedServices ("tempEmployeeService")] IEmployee tempEmployeeService) =>
+		(_employeeService, _tempEmployeeService) = (employeeService, tempEmployeeService);
 
 	[HttpGet ("employee")]
 	[ProducesResponseType<Response> (StatusCodes.Status200OK, "application/json")]
@@ -22,7 +26,7 @@ public class KeyedServiceController : ControllerBase
 
 		var result = new Response
 		{
-			Message = $"{_employeeRepository.GetMessage ()} - {version}"
+			Message = $"{_employeeService.GetMessage ()} - {version}"
 		};
 
 		return Ok (result);
@@ -32,13 +36,13 @@ public class KeyedServiceController : ControllerBase
 	[ProducesResponseType<Response[]> (StatusCodes.Status200OK, "application/json")]
 	[EndpointSummary ("Get Temporary Employee")]
 	[EndpointDescription ("This endpoint get's the message from the Temporary Employee keyed service.")]
-	public IActionResult GetTempEmployee ([FromKeyedServices ("tempEmployeeRepo")] IEmployee employeeRepository)
+	public IActionResult GetTempEmployee ()
 	{
 		var version = "v" + HttpContext.GetRequestedApiVersion ();
 
 		var result = new Response
 		{
-			Message = $"{employeeRepository.GetMessage ()} - {version}"
+			Message = $"{_tempEmployeeService.GetMessage ()} - {version}"
 		};
 
 		return Ok (result);
@@ -46,16 +50,16 @@ public class KeyedServiceController : ControllerBase
 
 	[HttpGet ("both")]
 	[ProducesResponseType<Response[]> (StatusCodes.Status200OK, "application/json")]
-	[EndpointSummary ("Get Employees")]
+	[EndpointSummary ("Get Both")]
 	[EndpointDescription ("This endpoint get's the message from both Employee & Temporary Employee keyed services.")]
-	public IActionResult GetBoth ([FromKeyedServices ("tempEmployeeRepo")] IEmployee tempEmployeeRepository)
+	public IActionResult GetBoth ()
 	{
 		var version = "v" + HttpContext.GetRequestedApiVersion ();
 
-		Response empRepoMessage = new () { Message = $"{_employeeRepository.GetMessage ()} - {version}" };
-		Response tempEmpRepoMessage = new () { Message = $"{tempEmployeeRepository.GetMessage ()} - {version}" };
+		Response empMessage = new () { Message = $"{_employeeService.GetMessage ()} - {version}" };
+		Response tempEmpMessage = new () { Message = $"{_tempEmployeeService.GetMessage ()} - {version}" };
 
-		Response[] responses = [empRepoMessage, tempEmpRepoMessage];
+		Response[] responses = [empMessage, tempEmpMessage];
 
 		return Ok (responses);
 	}

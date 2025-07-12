@@ -361,3 +361,12 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Application files no longer required.
+ApiVersioningDemo/Attributes/EvenNumberAttribute.cs
+ApiVersioningDemo/Swagger/ConfigureSwaggerOptions.cs
+ApiVersioningDemo/Swagger/SwaggerDefaultValues.cs
+ApiVersioningDemo/Dto/CustomProblemDetails.cs
+ApiVersioningDemo/Services/EmployeeRepository.cs
+ApiVersioningDemo/Services/TempEmployeeRepository.cs
+ApiVersioningDemo/Dto/Employees.cs

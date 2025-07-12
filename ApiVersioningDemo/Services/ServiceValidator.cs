@@ -2,11 +2,11 @@
 
 public class ServiceValidator
 {
-	private readonly IEmployee _employeeRepository;
-	private readonly IEmployee _tempEmployeeRepository;
+	private readonly IEmployee _employeeService;
+	private readonly IEmployee _tempEmployeeService;
 
 	public ServiceValidator (
-		[FromKeyedServices ("employeeRepo")] IEmployee employeeRepository,
-		[FromKeyedServices ("tempEmployeeRepo")] IEmployee tempEmployeeRepository) =>
-			(_employeeRepository, _tempEmployeeRepository) = (employeeRepository, tempEmployeeRepository);
+		[FromKeyedServices ("employeeService")] IEmployee employeeService,
+		[FromKeyedServices ("tempEmployeeService")] IEmployee tempEmployeeService) =>
+			(_employeeService, _tempEmployeeService) = (employeeService, tempEmployeeService);
 }

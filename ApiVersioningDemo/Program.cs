@@ -1,12 +1,13 @@
 var builder = WebApplication.CreateBuilder (args);
 
-// Configure IoC/Dependency Container
-builder.ConfigureIoCContainer ();
+// Add services to the container.
+IoC.ConfigureIoCContainer (builder);
 
 var app = builder.Build ();
 
 // Configure the HTTP request pipeline.
-app.ConfigurePipeline ();
+Middleware.ConfigurePipeline (app);
 
-// Terminate Middleware and execute the app
+new MyEndpoints ().MapMyEndpoints (app);
+
 app.Run ();

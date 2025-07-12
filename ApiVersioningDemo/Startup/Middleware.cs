@@ -12,38 +12,70 @@ public static class Middleware
 
 		if (app.Environment.IsDevelopment ())
 		{
+			var versionDescriptions = app.DescribeApiVersions ();
+
+			var versionList = versionDescriptions
+				.OrderByDescending (d => d.GroupName)
+				.Select (d => new
+				{
+					d.GroupName,
+					d.ApiVersion,
+					Url = $"/openApi/{d.GroupName}.json",
+					Name =
+						d.IsDeprecated
+							? $"{d.GroupName.ToUpperInvariant ()} (DEPRECATED)"
+							: $"{d.GroupName.ToUpperInvariant ()}"
+				})
+				.ToList ();
+
+			Console.WriteLine ("Discovered API versions:");
+
+			foreach (var description in versionList)
+				Console.WriteLine ($"- {description.GroupName} (v{description.ApiVersion})");
+
 			// Configure Open Api
-			app.MapOpenApi ();
+			app.MapOpenApi ("openApi/{documentName}.json");
 
 			// Configure Swagger
 			app.UseSwagger (c => c.RouteTemplate = "openApi/{documentName}.json");
 			app.UseSwaggerUI (options =>
 			{
-				var descriptions = app.DescribeApiVersions ();
-
-				// Enable the "Try it out" button out of the box.
-				options.EnableTryItOutByDefault ();
-
-				// Display the request duration at the end of the response.
-				options.DisplayRequestDuration ();
+				// Add Document Title for Swagger UI
+				options.DocumentTitle = "Request Validation in Minimal APIs v1.";
 
 				// Collapse all the tags & schema sections.
 				options.DocExpansion (DocExpansion.None);
 
+				// Enable deep linking for tags and operations in the URL.
+				options.EnableDeepLinking ();
+
+				// Enable filtering of the operations based on Tags.
+				options.EnableFilter ();
+
+				// Enable the validator badge.
+				options.EnableValidator ();
+
+				// Enable the "Try it out" button out of the box.
+				options.EnableTryItOutByDefault ();
+
+				// Display OperationId for all endpoints.
+				options.DisplayOperationId ();
+
+				// Display the request duration at the end of the response.
+				options.DisplayRequestDuration ();
+
 				// Render example in the Model tab.
 				options.DefaultModelRendering (ModelRendering.Example);
 
-				foreach (var description in descriptions.OrderByDescending (d => d.GroupName))
-				{
-					var url = $"/openApi/{description.GroupName}.json";
+				// Set the default model expand depth to 4.
+				options.DefaultModelExpandDepth (4);
 
-					var name = description.IsDeprecated
-						? $"{description.GroupName.ToUpperInvariant ()} (DEPRECATED)"
-						: $"{description.GroupName.ToUpperInvariant ()}";
+				// Set the default model expand depth to 4.
+				options.DefaultModelsExpandDepth (4);
 
-					// Add a Swagger endpoint for each API version.
-					options.SwaggerEndpoint (url, name);
-				}
+				// Define the Swagger endpoints.
+				foreach (var description in versionList)
+					options.SwaggerEndpoint (description.Url, description.Name);
 			});
 
 			// Configure Scalar
@@ -56,23 +88,22 @@ public static class Middleware
 					.WithClientButton (false)
 					.WithTheme (ScalarTheme.BluePlanet)
 					.WithTitle ("Keyed Services Demo")
-					.WithDownloadButton (true)
+					.WithDocumentDownloadType (DocumentDownloadType.Both)
 					.WithDefaultOpenAllTags (false)
 					.WithFavicon ("https://scalar.com/logo-light.svg")
 					.WithDefaultHttpClient (ScalarTarget.CSharp, ScalarClient.HttpClient);
 
-				var descriptions = app.DescribeApiVersions ();
+				var serverPort = app.Urls.FirstOrDefault ()?.Split (':').Last ();
 
-				foreach (var description in descriptions.OrderByDescending (d => d.GroupName))
-				{
-					var url = $"/openApi/{description.GroupName}.json";
+				// Scalar uses the servers section from the OpenAPI document.
+				// If no server is explicitly set, it defaults to http://localhost without inspecting the actual port.
+				// Swagger, uses middleware that dynamically reads the request context and adjusts accordingly.
+				// Added as a caution
+				options.AddServer ($"http://localhost:{serverPort}");
 
-					var name = description.IsDeprecated
-						? $"{description.GroupName.ToUpperInvariant ()} (DEPRECATED)"
-						: $"{description.GroupName.ToUpperInvariant ()}";
-
-					options.AddDocument ("Keyed Services Demo", name, url);
-				}
+				// Define Scalar endpoints.
+				foreach (var description in versionList)
+					options.AddDocument ("Keyed Services Demo", description.Name, description.Url);
 			});
 		}
 

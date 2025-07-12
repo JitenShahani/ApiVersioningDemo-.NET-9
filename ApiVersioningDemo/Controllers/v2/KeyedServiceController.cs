@@ -1,17 +1,19 @@
-﻿namespace ApiVersioningDemo.Controllers.v2;
+﻿namespace ApiVersioningDemo.Controllers.V2;
 
 [ApiController]
 [Route ("api/v{version:apiVersion}/[controller]")]
 [ApiVersion ("2.0")]
-[Tags ("Keyed Services")]
+[ApiExplorerSettings (GroupName = "v2")]
+[Tags ("Controller Endpoints")]
 public class KeyedServiceController : ControllerBase
 {
-	private readonly IEmployee _employeeRepository;
+	private readonly IEmployee _employeeService;
+	private readonly IEmployee _tempEmployeeService;
 
-	public KeyedServiceController ([FromKeyedServices ("employeeRepo")] IEmployee employeeRepository)
-	{
-		_employeeRepository = employeeRepository;
-	}
+	public KeyedServiceController (
+		[FromKeyedServices ("employeeService")] IEmployee employeeService,
+		[FromKeyedServices ("tempEmployeeService")] IEmployee tempEmployeeService) =>
+			(_employeeService, _tempEmployeeService) = (employeeService, tempEmployeeService);
 
 	[HttpGet ("employee")]
 	[ProducesResponseType<Response> (StatusCodes.Status200OK, "application/json")]
@@ -23,7 +25,7 @@ public class KeyedServiceController : ControllerBase
 
 		var result = new Response
 		{
-			Message = $"{_employeeRepository.GetMessage ()} - {version}"
+			Message = $"{_employeeService.GetMessage ()} - {version}"
 		};
 
 		return Ok (result);
@@ -33,13 +35,13 @@ public class KeyedServiceController : ControllerBase
 	[ProducesResponseType<Response> (StatusCodes.Status200OK, "application/json")]
 	[EndpointSummary ("Get Temporary Employee")]
 	[EndpointDescription ("This endpoint get's the message from the Temporary Employee keyed service.")]
-	public IActionResult GetTempEmployee ([FromKeyedServices ("tempEmployeeRepo")] IEmployee employeeRepository)
+	public IActionResult GetTempEmployee ()
 	{
 		var version = "v" + HttpContext.GetRequestedApiVersion ();
 
 		var result = new Response
 		{
-			Message = $"{employeeRepository.GetMessage ()} - {version}"
+			Message = $"{_tempEmployeeService.GetMessage ()} - {version}"
 		};
 
 		return Ok (result);
@@ -47,58 +49,17 @@ public class KeyedServiceController : ControllerBase
 
 	[HttpGet ("both")]
 	[ProducesResponseType<Response[]> (StatusCodes.Status200OK, "application/json")]
-	[EndpointSummary ("Get Employees")]
+	[EndpointSummary ("Get Both")]
 	[EndpointDescription ("This endpoint get's the message from both Employee & Temporary Employee keyed services.")]
-	public IActionResult GetBoth ([FromKeyedServices ("tempEmployeeRepo")] IEmployee tempEmployeeRepository)
+	public IActionResult GetBoth ()
 	{
 		var version = "v" + HttpContext.GetRequestedApiVersion ();
 
-		Response empRepoMessage = new () { Message = $"{_employeeRepository.GetMessage ()} - {version}" };
-		Response tempRepoMessage = new () { Message = $"{tempEmployeeRepository.GetMessage ()} - {version}" };
+		Response empMessage = new () { Message = $"{_employeeService.GetMessage ()} - {version}" };
+		Response tempMessage = new () { Message = $"{_tempEmployeeService.GetMessage ()} - {version}" };
 
-		Response[] responses = [empRepoMessage, tempRepoMessage];
+		Response[] responses = [empMessage, tempMessage];
 
 		return Ok (responses);
-	}
-
-	[HttpGet ("Employees")]
-	[ProducesResponseType<List<Employees>> (StatusCodes.Status200OK, "application/json")]
-	[ProducesResponseType (StatusCodes.Status400BadRequest)]
-	[EndpointSummary ("List of Employees")]
-	[EndpointDescription ("This endpoint get's the list of employees from the database.")]
-	public IActionResult GetEmployees ()
-	{
-		int randomNumber = Random.Shared.Next (0, 2);
-
-		// Populate Problem Details just in case bad request is sent.
-		ProblemDetailsFactory problemDetailsFactory = HttpContext.RequestServices.GetRequiredService<ProblemDetailsFactory> ();
-		ProblemDetails problemDetails = problemDetailsFactory.CreateProblemDetails (HttpContext, StatusCodes.Status400BadRequest);
-
-		problemDetails.Extensions["errors"] = new Dictionary<string, object?> ()
-		{
-			["Message"] = "The request was randomly rejected to simulate a Bad Request scenario."
-		};
-
-		CustomProblemDetails customProblemDetails = new ()
-		{
-			Type = problemDetails.Type,
-			Title = problemDetails.Title,
-			Status = problemDetails.Status,
-			Detail = problemDetails.Detail,
-			Instance = problemDetails.Instance,
-			TraceId = problemDetails.Extensions["traceId"]!.ToString (),
-			RequestId = problemDetails.Extensions["requestId"]!.ToString (),
-			Errors = problemDetails.Extensions["errors"] as Dictionary<string, object?>
-		};
-
-		return randomNumber == 1
-			? Ok (new List<Employees>
-			{
-				new () { FirstName = "Durgesh", LastName = "Shukla", Age = 48 },
-				new () { FirstName = "Dhruv", LastName = "Trivedi", Age = 51 },
-				new () { FirstName = "Jiten", LastName = "Shahani", Age = 49 },
-				new () { FirstName = "Rahul", LastName = "Pal", Age = 32 }
-			})
-			: BadRequest (customProblemDetails);
 	}
 }

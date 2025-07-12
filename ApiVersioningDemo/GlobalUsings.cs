@@ -13,11 +13,8 @@ global using Swashbuckle.AspNetCore.SwaggerUI;
 global using Swashbuckle.AspNetCore.SwaggerGen;
 global using Microsoft.AspNetCore.Mvc.ApiExplorer;
 global using Microsoft.AspNetCore.Mvc.ModelBinding;
-global using System.ComponentModel.DataAnnotations;
-global using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 global using ApiVersioningDemo.Dto;
 global using ApiVersioningDemo.Startup;
-global using ApiVersioningDemo.Swagger;
 global using ApiVersioningDemo.Services;
-global using ApiVersioningDemo.Attributes;
+global using ApiVersioningDemo.MinimalEndpoints;
