@@ -138,7 +138,7 @@ builder.Services.AddApiVersioning (options =>
 GET http://localhost:xxxx/api/KeyedService/employee?api-version=1.0
 ```
 
-- The default query string key is `api-version`, but it can be changed (e.g., new QueryStringApiVersionReader("version")).
+- The default query string key is `api-version`, but it can be changed (e.g., new QueryStringApiVersionReader ("version")).
 - Easy to test manually via browser or Postman.
 - Less cache-friendly and can clutter URLs with version metadata.
 
@@ -196,8 +196,10 @@ GET http://localhost:xxxx/api/v1/KeyedService/employee
 ```
 
 - Injects version directly into the request path (/v1/, /v2/, etc).
-- Requires route configuration on controllers, e.g. `[Route ("api/{version:apiVersion}/[controller]")]`.
-- Enhances discoverability and works seamlessly with [ApiVersion], version-specific DI, and OpenAPI grouping.
+- Requires explicit route configuration in both controllers and minimal APIs.
+	- Controllers: `[Route ("api/{version:apiVersion}/[controller]")]`
+	- Minimal APIs: `/api/v{version:apiVersion}/...` route paths with `.HasApiVersion(...)` and `.WithApiVersionSet(...)`
+- Enhances discoverability and integrates seamlessly with controllers and minimal endpoints. Supports version-specific DI and OpenAPI grouping for tools like Swagger UI and Scalar.
 
 ## ⚙️ Configuration Notes
 
