@@ -12,6 +12,7 @@ public class MyEndpoints
 			.Build ();
 
 		var myGroup = app.MapGroup ("/v{version:apiVersion}/hello")
+			.WithOpenApi ()
 			.WithApiVersionSet (versionSet)
 			.WithTags ("Minimal Endpoints")
 			.WithSummary ("Hello, World!");
@@ -22,14 +23,14 @@ public class MyEndpoints
 
 			return TypedResults.Ok ($"Hello, World! - {apiVersion}");
 		})
-			.HasApiVersion (new ApiVersion (1, 0))
-			.Deprecated ()
-			.WithOpenApi(operation =>
+			.WithOpenApi (operation =>
 			{
 				operation.Deprecated = true;
 
 				return operation;
-			});
+			})
+			.HasApiVersion (new ApiVersion (1, 0))
+			.Deprecated ();
 
 		myGroup.MapGet ("", (HttpContext httpContext) =>
 		{

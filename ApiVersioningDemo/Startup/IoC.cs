@@ -47,12 +47,10 @@ public static class IoC
 			};
 		});
 
-		// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-		builder.Services.AddOpenApi ();
-
 		// Adds support for API endpoint discovery and documentation generation
 		builder.Services.AddEndpointsApiExplorer ();
 
+		// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 		// Configure OpenAPI version specific documents
 		// builder.Services.AddOpenApi ("v1", options =>
 		// {

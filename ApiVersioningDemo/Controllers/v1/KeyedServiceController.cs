@@ -2,8 +2,8 @@
 
 [ApiController]
 [Route ("api/v{version:apiVersion}/[controller]")]
-[ApiExplorerSettings (GroupName = "v1")]
 [ApiVersion ("1.0", Deprecated = true)]
+[ApiExplorerSettings (GroupName = "v1")]
 [Obsolete ("Deprecated")]
 [Tags ("Controller Endpoints")]
 public class KeyedServiceController : ControllerBase

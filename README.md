@@ -1,4 +1,4 @@
-<!--
+﻿<!--
 ## 📚 Table of Contents
 
 - [🔄 API Versioning Demo](#-api-versioning-demo)
@@ -7,37 +7,37 @@
 - [🌐 Launch Profiles & UI Clients](#-launch-profiles--ui-clients)
 - [📌 Endpoints](#-endpoints)
 - [🔢 API Versioning Strategies](#-api-versioning-strategies)
-	- [1. ❓ Query Parameter Versioning](#1--query-parameter-versioning)
-	- [2. 📬 Header-Based Versioning](#2--header-based-versioning)
-	- [3. 📰 Media Type Versioning](#3--media-type-versioning)
-	- [4. 🌐 URL Segment Versioning (Used in this Project)](#4--url-segment-versioning-used-in-this-project)
+	- [1. Query Parameter Versioning](#1-query-parameter-versioning)
+	- [2. Header-Based Versioning](#2-header-based-versioning)
+	- [3. Media Type Versioning](#3-media-type-versioning)
+	- [4. URL Segment Versioning (Used in this Project)](#4-url-segment-versioning-used-in-this-project)
 - [⚙️ Configuration Notes](#-configuration-notes)
-	- [🧩 IoC Configuration & Registration](#-ioc-configuration--registration)
-		- [🛡️ Validation Behavior](#-validation-behavior)
-		- [📘 Controller & Serialization Setup](#-controller--serialization-setup)
-		- [🩺 Problem Details Configuration](#-problem-details-configuration)
-		- [📚 OpenAPI & Documentation](#-openapi--documentation)
-		- [🔑 Keyed DI & Validation](#-keyed-di--validation)
-	- [🧾 DTOs](#-dtos)
-		- [Response.cs](#-responsecs)
+	- [IoC Configuration & Registration](#ioc-configuration--registration)
+		- [Validation Behavior](#validation-behavior)
+		- [Controller & Serialization Setup](#controller--serialization-setup)
+		- [Problem Details Configuration](#problem-details-configuration)
+		- [OpenAPI & Documentation](#openapi--documentation)
+		- [Keyed DI & Validation](#keyed-di--validation)
+	- [DTOs](#dtos)
+		- [Response.cs](#responsecs)
 		- [WeatherForecast.cs](#weatherforecastcs)
-	- [🛠️ Services](#-services)
-		- [📄 IEmployee.cs](#-iemployeecs)
-		- [👤 EmployeeService.cs](#-employeeservicecs)
-		- [⛑️ TempEmployeeService.cs](#-tempemployeeservicecs)
-		- [✅ ServiceValidator.cs](#-servicevalidatorcs)
-	- [🔧 API Versioning Setup](#-api-versioning-setup)
-		- [🧭 How to Configure API Versioning](#-how-to-configure-api-versioning)
-		- [🧬 Generate Version-Specific Documents](#-generate-version-specific-documents)
-			- [🔹 Configure Using OpenApi](#-configure-using-openapi)
-			- [🔹 Configure Using Swashbuckle](#-configure-using-swashbuckle)
-		- [📘 UI Client Integration Overview](#-ui-client-integration-overview)
-			- [🛠️ Configure Swagger UI](#-configure-swagger-ui)
-			- [🛠️ Configure Scalar](#-configure-scalar)
-		- [🔎 Versioned Endpoint Samples](#-versioned-endpoint-samples)
-			- [📂 Controller-Based Endpoints](#-controller-based-endpoints)
-			- [📂 Minimal API Endpoints](#-minimal-api-endpoints)
-	- [🧠 Hidden Gotchas & Best Practices](#-hidden-gotchas--best-practices)
+	- [Services](#services)
+		- [IEmployee.cs](#iemployeecs)
+		- [EmployeeService.cs](#employeeservicecs)
+		- [TempEmployeeService.cs](#tempemployeeservicecs)
+		- [ServiceValidator.cs](#servicevalidatorcs)
+	- [API Versioning Setup](#api-versioning-setup)
+		- [How to Configure API Versioning](#how-to-configure-api-versioning)
+		- [Generate Version-Specific Documents](#generate-version-specific-documents)
+			- [Configure Using OpenApi](#configure-using-openapi)
+			- [Configure Using Swashbuckle](#configure-using-swashbuckle)
+		- [UI Client Integration Overview](#ui-client-integration-overview)
+			- [Configure Swagger UI](#configure-swagger-ui)
+			- [Configure Scalar](#configure-scalar)
+		- [Versioned Endpoint Samples](#versioned-endpoint-samples)
+			- [Controller-Based Endpoints](#controller-based-endpoints)
+			- [Minimal API Endpoints](#minimal-api-endpoints)
+	- [Hidden Gotchas & Best Practices](#hidden-gotchas--best-practices)
 - [📚 References](#-references)
 - [🧭 Stay Curious. Build Thoughtfully.](#_stay-curious-build-thoughtfully-)
 -->
@@ -47,8 +47,8 @@
 [![Asp.Versioning.Mvc](https://img.shields.io/nuget/dt/Asp.Versioning.Mvc.svg?label=Asp.Versioning.Mvc&style=flat-square&logo=Nuget)](https://www.nuget.org/packages/Asp.Versioning.Mvc/)
 [![Asp.Versioning.Mvc.ApiExplorer](https://img.shields.io/nuget/dt/Asp.Versioning.Mvc.ApiExplorer.svg?label=Asp.Versioning.Mvc.ApiExplorer&style=flat-square&logo=Nuget)](https://www.nuget.org/packages/Asp.Versioning.Mvc.ApiExplorer/)
 [![Microsoft.AspNetCore.OpenApi](https://img.shields.io/nuget/dt/Microsoft.AspNetCore.OpenApi.svg?label=Microsoft.AspNetCore.OpenApi&style=flat-square&logo=Nuget)](https://www.nuget.org/packages/Microsoft.AspNetCore.OpenApi/)
-[![Scalar.AspNetCore](https://img.shields.io/nuget/dt/Scalar.AspNetCore.svg?label=Scalar.AspNetCore&style=flat-square&logo=Nuget)](https://www.nuget.org/packages/Scalar.AspNetCore/)
 [![Swashbuckle.AspNetCore](https://img.shields.io/nuget/dt/Swashbuckle.AspNetCore.svg?label=Swashbuckle.AspNetCore&style=flat-square&logo=Nuget)](https://www.nuget.org/packages/Swashbuckle.AspNetCore/)
+[![Scalar.AspNetCore](https://img.shields.io/nuget/dt/Scalar.AspNetCore.svg?label=Scalar.AspNetCore&style=flat-square&logo=Nuget)](https://www.nuget.org/packages/Scalar.AspNetCore/)
 
 This repository demonstrates how to implement **API Versioning** and **Keyed Singleton Services** in an ASP.NET Core Web API using **.NET 9**. It features both **Minimal APIs** and **Controller-based endpoints**, showing how to structure versioned routing, resolve services via constructor injection, and configure flexible, version-aware API documentation using **Swagger UI** and **Scalar**.
 
@@ -66,27 +66,27 @@ This repository demonstrates how to implement **API Versioning** and **Keyed Sin
 ApiVersioningDemo/
 ├── Controllers/
 │   ├── v1/
-│   │   └── KeyedServiceController.cs		v1 controller (deprecated)
+│   │   └── KeyedServiceController.cs	v1 controller (deprecated)
 │   ├── v2/
-│   │   └── KeyedServiceController.cs		v2 controller
-│   └── WeatherForecastController.cs		Version-neutral controller
+│   │   └── KeyedServiceController.cs	v2 controller
+│   └── WeatherForecastController.cs	Version-neutral controller
 ├── Dto/
-│   ├── Response.cs				DTO for API responses
-│   └── WeatherForecast.cs			DTO for Weather forecast
+│   ├── Response.cs						DTO for API responses
+│   └── WeatherForecast.cs				DTO for Weather forecast
 ├── MinimalEndpoints/
-│   ├── MyEndpoints.cs				Minimal Endpoints with both v1 & v2
+│   ├── MyEndpoints.cs					Minimal Endpoints with both v1 & v2
 ├── Services/
-│   ├── IEmployee.cs				Employee Service interface
-│   ├── EmployeeService.cs			Main Employee service
+│   ├── IEmployee.cs					Employee Service interface
+│   ├── EmployeeService.cs				Main Employee service
 │   ├── TempEmployeeService.cs			Temporary Employee service
-│   └── ServiceValidator.cs			Validates that all required keyed IEmployee services are registered at startup.
-│						This "dummy" service is injected with both `employeeRepo` and `tempEmployeeRepo` keyed services.
-│						This ensures the DI container throws an error during app build if any are missing or misconfigured.
-│						This provides early, fail-fast validation of your dependency injection setup.
+│   └── ServiceValidator.cs				Validates that all required keyed IEmployee services are registered at startup.
+│										This "dummy" service is injected with both `employeeRepo` and `tempEmployeeRepo` keyed services.
+│										This ensures the DI container throws an error during app build if any are missing or misconfigured.
+│										This provides early, fail-fast validation of your dependency injection setup.
 ├── Startup/
-│   ├── IoC.cs					Dependency injection and service registration
-│   └── Middleware.cs				Middleware and pipeline config
-└── Swagger/					These classes are no longer used in this project but are included for future reference.
+│   ├── IoC.cs							Dependency injection and service registration
+│   └── Middleware.cs					Middleware and pipeline config
+└── Swagger/							These classes are no longer used in this project but are included for future reference.
     ├── ConfigureSwaggerOptions.cs		Swashbuckle/OpenAPI configuration
     └── SwaggerDefaultValues.cs			Swashbuckle/OpenAPI operation filter
 ```
@@ -196,10 +196,10 @@ GET http://localhost:xxxx/api/v1/KeyedService/employee
 ```
 
 - Injects version directly into the request path (/v1/, /v2/, etc).
-- Requires explicit route configuration in both controllers and minimal APIs.
+- Requires explicit route configuration in both Controllers and Minimal APIs.
 	- Controllers: `[Route ("api/{version:apiVersion}/[controller]")]`
 	- Minimal APIs: `/api/v{version:apiVersion}/...` route paths with `.HasApiVersion(...)` and `.WithApiVersionSet(...)`
-- Enhances discoverability and integrates seamlessly with controllers and minimal endpoints. Supports version-specific DI and OpenAPI grouping for tools like Swagger UI and Scalar.
+- Enhances discoverability and integrates seamlessly with Controllers and Minimal endpoints. Supports version-specific DI and OpenAPI grouping for tools like Swagger UI and Scalar.
 
 ## ⚙️ Configuration Notes
 
@@ -264,7 +264,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 ```
 
-> These registrations prepare the application to expose OpenAPI-compatible metadata and endpoint descriptions. `AddOpenApi()` adds baseline support for spec generation and is typically used in conjunction with tools like Swagger/Scalar.
+> These registrations prepare the application to expose OpenAPI-compatible metadata and endpoint descriptions. `AddOpenApi()` adds baseline support for spec generation and is typically used in conjunction with tools like Swagger UI and Scalar.
 
 #### 🔑 Keyed DI & Validation
 
@@ -274,7 +274,7 @@ builder.Services.AddKeyedSingleton<IEmployee, TempEmployeeService>("tempEmployee
 builder.Services.AddSingleton<ServiceValidator>();
 ```
 
-Registers two implementations of `IEmployee` using keyed dependency injection, allowing versioned controllers or minimal APIs to request specific services via `[FromKeyedServices("...")]`. This pattern avoids conditional resolution logic and supports clean separation of behavior across versions. The `ServiceValidator` class is a dummy consumer of both keyed services injected at startup to trigger container validation. Combined with `.ValidateOnBuild`, it ensures all required dependencies are registered before runtime.
+Registers two implementations of `IEmployee` using keyed dependency injection, allowing versioned Controllers or Minimal APIs to request specific services via `[FromKeyedServices("...")]`. This pattern avoids conditional resolution logic and supports clean separation of behavior across versions. The `ServiceValidator` class is a dummy consumer of both keyed services injected at startup to trigger container validation. Combined with `.ValidateOnBuild`, it ensures all required dependencies are registered before runtime.
 
 ### 🧾 DTOs
 
@@ -352,7 +352,7 @@ public class TempEmployeeService : IEmployee
 
 Also implements `IEmployee`, but returns a different message. Registered with the key `tempEmployeeService` in DI container.
 
-#### ✅ `ServiceValidator.cs`
+#### ✅ ServiceValidator.cs
 
 ```csharp
 public class ServiceValidator
@@ -371,11 +371,11 @@ public class ServiceValidator
 
 ### 🔧 API Versioning Setup
 
-This section demonstrates how to configure API Versioning and integrate it with Swagger and Scalar interfaces for version-aware documentation and routing.
+This section demonstrates how to configure API Versioning and integrate it with Swagger UI and Scalar interfaces for version-aware documentation and routing.
 
 #### 🧭 How to Configure API Versioning
 
-API Versioning in this project is powered by `Asp.Versioning.Mvc` and its companion `Asp.Versioning.Mvc.ApiExplorer`. These packages provide endpoint version routing, controller tagging via `[ApiVersion(...)]`, and OpenAPI grouping support for Swagger/Scalar documentation.
+API Versioning in this project is powered by `Asp.Versioning.Mvc` and its companion `Asp.Versioning.Mvc.ApiExplorer`. These packages provide endpoint version routing, controller tagging via `[ApiVersion(...)]`, and OpenAPI grouping support for Swagger UI and Scalar documentation.
 
 Here’s how it's configured in `Startup/IoC.cs`:
 
@@ -401,16 +401,19 @@ builder.Services
 
 🧠 Key Concepts
 
-| Feature								| Purpose																								|
-|---------------------------------------|-------------------------------------------------------------------------------------------------------|
-| `DefaultApiVersion`					| Declares v2.0 as the supported default version.														|
-| `AssumeDefaultVersionWhenUnspecified`	| Enables fallback behavior for unversioned requests.													|
-| `ReportApiVersions`					| Adds version headers like `api-supported-versions` and `api-deprecated-versions` to API responses.	|
-| `UrlSegmentApiVersionReader`			| Parses version from URL segments (e.g., `/api/v2/...`).												|
-| `VersionByNamespaceConvention`		| Tags controllers with `[ApiVersion]` based on their folder namespace.									|
-| `AddApiExplorer`						| Groups versioned endpoints for OpenAPI, Swagger/Scalar generation.									|
+| Feature								| Purpose																															|
+|---------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| `DefaultApiVersion`					| Declares v2.0 as the supported default version.																					|
+| `AssumeDefaultVersionWhenUnspecified`	| Enables implicit fallback behavior for unversioned requests, routing them to the default.											|
+| `ReportApiVersions`					| Adds version headers like `api-supported-versions` and `api-deprecated-versions` to API responses.								|
+| `UrlSegmentApiVersionReader`			| Parses the version from URL segments (e.g., `/api/v2/...`).																		|
+| `AddMvc`								| Registers API versioning conventions for MVC-style controllers.																	|
+| `VersionByNamespaceConvention`		| Tags controllers with `[ApiVersion]` based on their folder namespace.																|
+| `AddApiExplorer`						| Enables endpoint discovery, OpenAPI grouping, and metadata tagging for versioned APIs.											|
+| `GroupNameFormat`						| Specifies the format used for version group names in OpenAPI (e.g., `'v'V` renders `v2` for version `2.0`).						|
+| `SubstituteApiVersionInUrl`			| Replaces `{version}` tokens in route templates with the actual version number (e.g., `v2`), ensuring correct endpoint routing.	|
 
-Here's how to configure Controllers/Controller Actions and Minimal endpoints to implement API Versioning.
+Here's how to configure Controllers and Minimal endpoints to implement API Versioning.
 
 🎯 Controller Example
 
@@ -437,18 +440,18 @@ app.MapGet("/api/v{version:apiVersion}/hello", () => "Hello, World!")
     .HasApiVersion(2.0);
 ```
 
-This configuration ensures that all endpoints whether controllers or minimal APIs are version-aware, grouped correctly in your documentation interfaces, and gracefully handle fallback scenarios. The result is a clean, discoverable, and scalable API structure.
+This configuration ensures that all endpoints whether Controllers or Minimal APIs are version-aware, grouped correctly in your documentation interfaces, and gracefully handle fallback scenarios. The result is a clean, discoverable, and scalable API structure.
 
 #### 🧬 Generate Version-Specific Documents
 
-The configuration under `Configure API Versioning` is sufficient for internal routing, version metadata tagging, and endpoint grouping. However, if you intend to visualize APIs through UI clients like `Swagger` or `Scalar`, you'll need to configure version-specific OpenAPI documents.
+The configuration under `Configure API Versioning` is sufficient for internal routing, version metadata tagging, and endpoint grouping. However, if you intend to visualize APIs through UI clients like `Swagger UI` or `Scalar`, you'll need to configure version-specific OpenAPI documents.
 
 ASP.NET Core supports two options for generating versioned documentation:
 
 | Approach			| Trade-offs																								|
 |-------------------|-----------------------------------------------------------------------------------------------------------|
-| AddOpenApi()		| Deprecated endpoints do not show correct metadata unless explicitly configured via transformers.		|
-| AddSwaggerGen()	| Since Swagger fully owns the document generation process, all configuration even if already set up in `AddOpenApi()` must be **manually redefined**, including authentication, filters, and schema options. |
+| `AddOpenApi()`	| Deprecated endpoints do not show correct metadata unless explicitly configured via transformers.		|
+| `AddSwaggerGen()`	| Since Swagger fully owns the document generation process, all configuration even if already set up in `AddOpenApi()` must be **manually redefined**, including authentication, filters, and schema options. |
 
 Choose the approach that best fits your documentation goals:
 
@@ -500,14 +503,14 @@ builder.Services.AddOpenApi ("v2", options =>
 app.MapOpenApi ("openApi/{documentName}.json");
 ```
 
-✅ This setup registers versioned OpenAPI documents using `AddOpenApi(...)`, configured to serve them at `/openApi/v1.json`, `/openApi/v2.json`, etc. Paths are standardized via middleware configuration. These documents contain grouped endpoints and metadata per version used by UI clients like Swagger or Scalar.
+✅ This setup registers versioned OpenAPI documents using `AddOpenApi(...)`, configured to serve them at `/openApi/v1.json`, `/openApi/v2.json`, etc. Paths are standardized via middleware configuration. These documents contain grouped endpoints and metadata per version used by UI clients like `Swagger UI` and `Scalar`.
+
+> ℹ️ Note: While the `AddOpenApi()` configuration successfully marks version 1 as deprecated, it applies this metadata globally including to version-neutral endpoints. To avoid unintended deprecation flags across the board, this implementation is currently commented out in favor of a more granular setup using Swashbuckle's `AddSwaggerGen()`.
 
 ##### 🔹 Configure Using Swashbuckle
 
 ```csharp
 // IoC.cs
-builder.Services.AddOpenApi();
-
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
@@ -528,11 +531,15 @@ builder.Services.AddSwaggerGen(options =>
 app.UseSwagger (c => c.RouteTemplate = "openApi/{documentName}.json");
 ```
 
-✅ This configuration uses `AddSwaggerGen(...)` to generate versioned OpenAPI documents. These are served at `/openApi/v1.json`, `/openApi/v2.json`, matching the same route template. Any existing metadata or settings from AddOpenApi() do not apply. Swashbuckle owns the generation process and must be re-configured independently.
+✅ This configuration uses Swashbuckle's `AddSwaggerGen(...)` to generate versioned OpenAPI documents. These are served at `/openApi/v1.json`, `/openApi/v2.json`, matching the same route template. Any existing metadata or settings from AddOpenApi() do not apply. Swashbuckle owns the generation process and must be re-configured independently.
+
+> ℹ️ Note: Use `app.MapOpenApi(...)` in the middleware only when generating documents via `AddOpenApi()`. Use `app.UseSwagger(...)` in the middleware exclusively with `AddSwaggerGen()`. Each middleware binds to its corresponding document generation strategy mixing them can lead to missing endpoints.
+
+> 💡 Note on Deprecated Metadata: For Minimal APIs, applying `[Obsolete("...")]` or using `.Deprecated()` extension method does **not** automatically reflect deprecation in OpenAPI documents. This applies **regardless of whether the documents are generated via `AddOpenApi()` or Swashbuckle's `AddSwaggerGen()`**. To correctly mark a Minimal endpoint as deprecated in your documentation, you must explicitly set it using `.WithOpenApi(operation => { operation.Deprecated = true; return operation; })`.
 
 #### 📘 UI Client Integration Overview
 
-Once versioned OpenAPI documents are registered, they can be rendered using UI clients like `Swagger` or `Scalar`. These integrations allow developers to explore grouped endpoints, inspect metadata, and test versioned APIs interactively.
+Once versioned OpenAPI documents are registered, they can be rendered using UI clients like `Swagger UI` or `Scalar`. These integrations allow developers to explore grouped endpoints, inspect metadata, and test versioned APIs interactively.
 
 The following sections walks through configuration for each UI client.
 
@@ -542,6 +549,22 @@ Swagger UI enables interactive exploration of your versioned API specs. Once Ope
 
 ```csharp
 // Middleware.cs
+var versionDescriptions = app.DescribeApiVersions ();
+
+var versionList = versionDescriptions
+	.OrderByDescending (d => d.GroupName)
+	.Select (d => new
+	{
+		d.GroupName,
+		d.ApiVersion,
+		Url = $"/openApi/{d.GroupName}.json",
+		Name =
+			d.IsDeprecated
+				? $"{d.GroupName.ToUpperInvariant ()} (DEPRECATED)"
+				: $"{d.GroupName.ToUpperInvariant ()}"
+	})
+	.ToList ();
+
 app.UseSwaggerUI (options =>
 {
 	// Add Document Title for Swagger UI
@@ -591,6 +614,22 @@ Scalar provides a streamlined, modern interface for exploring versioned OpenAPI 
 
 ```csharp
 // Middleware.cs
+var versionDescriptions = app.DescribeApiVersions ();
+
+var versionList = versionDescriptions
+	.OrderByDescending (d => d.GroupName)
+	.Select (d => new
+	{
+		d.GroupName,
+		d.ApiVersion,
+		Url = $"/openApi/{d.GroupName}.json",
+		Name =
+			d.IsDeprecated
+				? $"{d.GroupName.ToUpperInvariant ()} (DEPRECATED)"
+				: $"{d.GroupName.ToUpperInvariant ()}"
+	})
+	.ToList ();
+
 app.MapScalarApiReference (options =>
 {
 	options
@@ -619,6 +658,8 @@ app.MapScalarApiReference (options =>
 });
 ```
 
+> Ensure the favicon URL remains accessible. Replace with a local asset if needed.
+
 🧩 Scalar renders versioned documentation automatically, using the keys registered in the pipeline. It groups endpoints per version and displays embedded metadata such as titles, descriptions, and deprecation tags. No visual customization is required. The UI adapts to document content and reflects it cleanly. Scalar’s minimalist layout offers immediate access to endpoints, tags, request details, and response models, ideal for clean client-side exploration.
 
 #### 🔎 Versioned Endpoint Samples
@@ -632,8 +673,8 @@ Here’s how versioned endpoints are declared using both `Controllers` and `Mini
 
 [ApiController]
 [Route ("api/v{version:apiVersion}/[controller]")]
-[ApiExplorerSettings (GroupName = "v1")]
 [ApiVersion ("1.0", Deprecated = true)]
+[ApiExplorerSettings (GroupName = "v1")]
 [Obsolete ("Deprecated")]
 [Tags ("Controller Endpoints")]
 public class KeyedServiceController : ControllerBase
@@ -761,7 +802,7 @@ public class KeyedServiceController : ControllerBase
 }
 ```
 
-✅ Controllers define both `[ApiVersion(...)]` and `GroupName` to register their endpoints in version-specific documentation. Routing relies on a URL segment pattern: api/{version:apiVersion}/... Each action returns a typed DTO and uses FromKeyedServices for clean DI resolution.
+✅ Controllers define both `[ApiVersion(...)]` and `GroupName` to register their endpoints in version-specific documentation. Routing relies on a URL segment pattern: `api/{version:apiVersion}/...`. Each action returns a typed DTO and uses FromKeyedServices for clean DI resolution.
 
 ##### 📂 Minimal API Endpoints
 
@@ -779,6 +820,7 @@ public class MyEndpoints
 			.Build ();
 
 		var myGroup = app.MapGroup ("/v{version:apiVersion}/hello")
+			.WithOpenApi ()
 			.WithApiVersionSet (versionSet)
 			.WithTags ("Minimal Endpoints")
 			.WithSummary ("Hello, World!");
@@ -790,13 +832,7 @@ public class MyEndpoints
 			return TypedResults.Ok ($"Hello, World! - {apiVersion}");
 		})
 			.HasApiVersion (new ApiVersion (1, 0))
-			.Deprecated ()
-			.WithOpenApi(operation =>
-			{
-				operation.Deprecated = true;
-
-				return operation;
-			});
+			.Deprecated ();
 
 		myGroup.MapGet ("", (HttpContext httpContext) =>
 		{
@@ -809,15 +845,15 @@ public class MyEndpoints
 }
 ```
 
-✅ Minimal APIs rely on `ApiVersionSet` for declarative versioning. Use `.NewApiVersionSet()` to build a set, then bind it to endpoints with `.WithApiVersionSet(...)`. Metadata like `.HasApiVersion(...)` and `.WithOpenApi()` ensures correct grouping and discovery in tools like Swagger or Scalar. Minimal APIs integrate cleanly with both Swagger and Scalar, provided they’re routed and grouped consistently.
+✅ Minimal APIs rely on `ApiVersionSet` for declarative versioning. Use `.NewApiVersionSet()` to build a set, then bind it to endpoints with `.WithApiVersionSet(...)`. Metadata like `.HasApiVersion(...)` and `.WithOpenApi()` ensures correct grouping and discovery in tools like Swagger or Scalar. Minimal APIs integrate cleanly with both `Swagger UI` and `Scalar`, provided they’re routed and grouped consistently.
 
 ## 🧠 Hidden Gotchas & Best Practices
 
 Here are a few nuanced tips to keep your versioned API setup clean, maintainable, and discoverable:
 
-- 🧩 Keep [ApiVersion] consistent with declared JSON docs. Ensure that your registered OpenAPI documents match the version values used in controller and minimal endpoints. Mismatches lead to invisible routes.
-- ⚠️ Don’t forget `ApiExplorerSettings(GroupName = "vX")`. Omitting this leads to missing endpoints in Swagger and Scalar UI. Grouping is explicit.
-- ⚠️ Avoid duplicate route definitions across versions If two controllers define the same action under the same route but different versions, only one may be rendered if grouping isn’t handled correctly.
+- 🧩 Keep `[ApiVersion]` consistent with declared JSON docs. Ensure that your registered OpenAPI documents match the version values used in Controllers and Minimal endpoints. Mismatches lead to invisible routes.
+- ⚠️ Don’t forget `ApiExplorerSettings(GroupName = "vX")`. Omitting this leads to missing endpoints in Swagger UI and Scalar. Grouping is explicit.
+- ⚠️ Avoid duplicate route definitions across versions. If two controllers define the same action under the same route but different versions, only one may be rendered if grouping isn’t handled correctly.
 - 🛠️ Minimal APIs must use `WithApiVersionSet(...)` for proper registration. Without it, endpoints won’t be grouped correctly in OpenAPI documents, even if they declare a version.
 
 ## 📚 References

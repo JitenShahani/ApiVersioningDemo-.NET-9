@@ -34,7 +34,7 @@ public static class Middleware
 				Console.WriteLine ($"- {description.GroupName} (v{description.ApiVersion})");
 
 			// Configure Open Api
-			app.MapOpenApi ("openApi/{documentName}.json");
+			// app.MapOpenApi ("openApi/{documentName}.json");
 
 			// Configure Swagger
 			app.UseSwagger (c => c.RouteTemplate = "openApi/{documentName}.json");
