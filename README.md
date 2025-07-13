@@ -50,7 +50,7 @@
 [![Swashbuckle.AspNetCore](https://img.shields.io/nuget/dt/Swashbuckle.AspNetCore.svg?label=Swashbuckle.AspNetCore&style=flat-square&logo=Nuget)](https://www.nuget.org/packages/Swashbuckle.AspNetCore/)
 [![Scalar.AspNetCore](https://img.shields.io/nuget/dt/Scalar.AspNetCore.svg?label=Scalar.AspNetCore&style=flat-square&logo=Nuget)](https://www.nuget.org/packages/Scalar.AspNetCore/)
 
-This repository demonstrates how to implement **API Versioning** and **Keyed Singleton Services** in an ASP.NET Core Web API using **.NET 9**. It features both **Minimal APIs** and **Controller-based endpoints**, showing how to structure versioned routing, resolve services via constructor injection, and configure flexible, version-aware API documentation using **Swagger UI** and **Scalar**.
+This repository demonstrates how to implement **API Versioning** and **Keyed Singleton Services** in an ASP.NET Core Web API using **.NET 9**. It features both **Minimal APIs** and **Controller-based endpoints**, showing how to structure versioned routing, resolve services via constructor injection, and configure flexible, version-aware API documentation using **OpenAPI** and **Swashbuckle**, visualized through both **Swagger UI** and **Scalar**.
 
 ## 🎯 Key Objectives
 
