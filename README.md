@@ -504,7 +504,7 @@ builder.Services.AddOpenApi ("v2", options =>
 app.MapOpenApi ("openApi/{documentName}.json");
 ```
 
-✅ This setup registers versioned OpenAPI documents using `AddOpenApi(...)`, configured to serve them at `/openApi/v1.json`, `/openApi/v2.json`, etc. Paths are standardized via middleware configuration. These documents contain grouped endpoints and metadata per version used by UI clients like `Swagger UI` and `Scalar`.
+✅ This setup registers versioned OpenAPI documents using `AddOpenApi(...)`, configured to serve them at `/openApi/v1.json`, `/openApi/v2.json`, etc. Paths are standardized via middleware configuration. These documents are automatically grouped by version and compatible with UI clients like `Swagger UI` and `Scalar`.
 
 > ℹ️ Note: While the `AddOpenApi()` configuration successfully marks version 1 as deprecated, it applies this metadata globally including to version-neutral endpoints. To avoid unintended deprecation flags across the board, this implementation is currently commented out in favor of a more granular setup using Swashbuckle's `AddSwaggerGen()`.
 
@@ -846,14 +846,14 @@ public class MyEndpoints
 }
 ```
 
-✅ Minimal APIs rely on `ApiVersionSet` for declarative versioning. Use `.NewApiVersionSet()` to build a set, then bind it to endpoints with `.WithApiVersionSet(...)`. Metadata like `.HasApiVersion(...)` and `.WithOpenApi()` ensures correct grouping and discovery in tools like Swagger or Scalar. Minimal APIs integrate cleanly with both `Swagger UI` and `Scalar`, provided they’re routed and grouped consistently.
+✅ Minimal APIs rely on `ApiVersionSet` for declarative versioning. Use `.NewApiVersionSet()` to define supported versions, then associate it with either endpoint group or endpoints via `.WithApiVersionSet(...)`. Extension methods such as `.HasApiVersion(...)` and `.WithOpenApi()` ensures endpoints are correctly grouped and discoverable in versioned OpenAPI documents. Provided the routing and grouping are consistent, Minimal APIs integrate seamlessly with OpenAPI tooling and client generators.
 
 ## 🧠 Hidden Gotchas & Best Practices
 
 Here are a few nuanced tips to keep your versioned API setup clean, maintainable, and discoverable:
 
 - 🧩 Keep `[ApiVersion]` consistent with declared JSON docs. Ensure that your registered OpenAPI documents match the version values used in Controllers and Minimal endpoints. Mismatches lead to invisible routes.
-- ⚠️ Don’t forget `ApiExplorerSettings(GroupName = "vX")`. Omitting this leads to missing endpoints in Swagger UI and Scalar. Grouping is explicit.
+- ⚠️ Don’t forget `ApiExplorerSettings(GroupName = "vX")`. Omitting this leads to missing endpoints in your OpenAPI documents and any downstream tooling that consumes grouped metadata. Grouping is explicit.
 - ⚠️ Avoid duplicate route definitions across versions. If two controllers define the same action under the same route but different versions, only one may be rendered if grouping isn’t handled correctly.
 - 🛠️ Minimal APIs must use `WithApiVersionSet(...)` for proper registration. Without it, endpoints won’t be grouped correctly in OpenAPI documents, even if they declare a version.
 
