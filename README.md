@@ -12,32 +12,33 @@
 	- [3. Media Type Versioning](#3-media-type-versioning)
 	- [4. URL Segment Versioning (Used in this Project)](#4-url-segment-versioning-used-in-this-project)
 - [⚙️ Configuration Notes](#-configuration-notes)
-	- [IoC Configuration & Registration](#ioc-configuration--registration)
-		- [Validation Behavior](#validation-behavior)
-		- [Controller & Serialization Setup](#controller--serialization-setup)
-		- [Problem Details Configuration](#problem-details-configuration)
-		- [OpenAPI & Documentation](#openapi--documentation)
-		- [Keyed DI & Validation](#keyed-di--validation)
-	- [DTOs](#dtos)
+	- [🧩 IoC Configuration & Registration](#ioc-configuration--registration)
+		- [🛡️ Validation Behavior](#validation-behavior)
+		- [📘 Controller & Serialization Setup](#controller--serialization-setup)
+		- [🩺 Problem Details Configuration](#problem-details-configuration)
+		- [📚 OpenAPI & Documentation](#openapi--documentation)
+		- [🔑 Keyed DI & Validation](#keyed-di--validation)
+	- [🧾 DTOs](#dtos)
 		- [Response.cs](#responsecs)
 		- [WeatherForecast.cs](#weatherforecastcs)
-	- [Services](#services)
+	- [🛠️ Services](#services)
 		- [IEmployee.cs](#iemployeecs)
 		- [EmployeeService.cs](#employeeservicecs)
 		- [TempEmployeeService.cs](#tempemployeeservicecs)
 		- [ServiceValidator.cs](#servicevalidatorcs)
-	- [API Versioning Setup](#api-versioning-setup)
-		- [How to Configure API Versioning](#how-to-configure-api-versioning)
-		- [Generate Version-Specific Documents](#generate-version-specific-documents)
-			- [Configure Using OpenApi](#configure-using-openapi)
-			- [Configure Using Swashbuckle](#configure-using-swashbuckle)
-		- [UI Client Integration Overview](#ui-client-integration-overview)
-			- [Configure Swagger UI](#configure-swagger-ui)
-			- [Configure Scalar](#configure-scalar)
-		- [Versioned Endpoint Samples](#versioned-endpoint-samples)
-			- [Controller-Based Endpoints](#controller-based-endpoints)
-			- [Minimal API Endpoints](#minimal-api-endpoints)
-	- [Hidden Gotchas & Best Practices](#hidden-gotchas--best-practices)
+- [🔧 API Versioning Setup](#api-versioning-setup)
+	- [🧭 How to Configure API Versioning](#how-to-configure-api-versioning)
+	- [🧬 Generate Version-Specific Documents](#generate-version-specific-documents)
+		- [🔹 Configure Using OpenApi](#configure-using-openapi)
+		- [🔹 Configure Using Swashbuckle](#configure-using-swashbuckle)
+- [📘 UI Client Integration Overview](#ui-client-integration-overview)
+	- [🛠️ Configure Swagger UI](#configure-swagger-ui)
+	- [🛠️ Configure Scalar](#configure-scalar)
+- [🔎 Versioned Endpoint Samples](#versioned-endpoint-samples)
+	- [📂 Controller-Based Endpoints](#controller-based-endpoints)
+	- [📂 Minimal API Endpoints](#minimal-api-endpoints)
+- [🧠 Hidden Gotchas & Best Practices](#hidden-gotchas--best-practices)
+- [🔬 Advanced Considerations](#-advanced-considerations)
 - [📚 References](#-references)
 - [🧭 Stay Curious. Build Thoughtfully.](#_stay-curious-build-thoughtfully-)
 -->
@@ -855,6 +856,214 @@ Here are a few nuanced tips to keep your versioned API setup clean, maintainable
 - ⚠️ Don’t forget `ApiExplorerSettings(GroupName = "vX")`. Omitting this leads to missing endpoints in Swagger UI and Scalar. Grouping is explicit.
 - ⚠️ Avoid duplicate route definitions across versions. If two controllers define the same action under the same route but different versions, only one may be rendered if grouping isn’t handled correctly.
 - 🛠️ Minimal APIs must use `WithApiVersionSet(...)` for proper registration. Without it, endpoints won’t be grouped correctly in OpenAPI documents, even if they declare a version.
+
+## 🔬 Advanced Considerations
+
+The following strategies explore subtle behaviors in versioned APIs, middleware sequencing, and documentation accuracy. These patterns are **not included in this demo project**, but they may help deepen your understanding and enhance production setups.
+
+### 🧪 Custom Middleware must respect API Versioning
+
+In advanced scenarios, middleware logic may vary based on the API version being requested such as version-specific rate limiting, logging, or conditional processing. However, it's important to understand how and when versioning is resolved in ASP.NET Core. API versioning in ASP.NET Core is resolved via **routing and model binding**, not through a middleware component. The version is only available in the `HttpContext` **after routing has executed**. If you write middleware that inspects the API version, it must run **after `app.UseRouting()`** but **before endpoint handling** otherwise, the version information will not be available.
+
+Example (Version-Specific Logging Middleware):
+
+```csharp
+var app = builder.Build ();
+
+app.UseRouting (); // 🔧 Routing must execute first
+
+app.Use (async (context, next) =>
+{
+	var version = context.GetRequestedApiVersion (); // Only available after routing
+
+	if (version?.MajorVersion == 2)
+	{
+		logger.LogInformation("Request received for v2 endpoint");
+		// You can apply version-specific logic here
+	}
+
+	await next ();
+});
+
+app.MapControllers (); // or app.MapGroup (...) for Minimal APIs
+```
+
+### 🔀 Endpoint Version discovery in Unit Tests
+
+When testing APIs that use versioning, it's critical to confirm that all versions are registered and discoverable. Silent misconfigurations like a missing `[ApiVersion]` attribute or missing `[[ApiExplorerSettings (GroupName = "vX")]]` attribute or an unregistered OpenAPI document can go unnoticed without programmatic inspection. Use `IApiVersionDescriptionProvider` to auto-discover available versions and assert their metadata.
+
+Example Test Snippet:
+
+```csharp
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using Asp.Versioning.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Xunit;
+
+public class ApiVersioningDocumentationTests : IClassFixture<WebApplicationFactory<Program>>
+{
+	private readonly WebApplicationFactory<Program> _factory;
+	private readonly IApiVersionDescriptionProvider _provider;
+
+	public ApiVersioningDocumentationTests (WebApplicationFactory<Program> factory)
+	{
+		_factory = factory;
+		_provider = factory.Services.GetRequiredService<IApiVersionDescriptionProvider> ();
+	}
+
+	[Fact]
+	public void AllApiVersions_ShouldBeDiscoverable ()
+	{
+		Assert.NotEmpty (_provider.ApiVersionDescriptions);
+
+		foreach (var version in _provider.ApiVersionDescriptions)
+		{
+			Assert.False (string.IsNullOrWhiteSpace (version.GroupName));
+			Assert.True (version.ApiVersion.IsDefined ());
+		}
+	}
+
+	[Fact]
+	public void DeprecatedVersions_ShouldBeFlagged ()
+	{
+		var deprecated = _provider.ApiVersionDescriptions.Where (d => d.IsDeprecated).ToList ();
+
+		Assert.Contains (deprecated, d => d.GroupName == "v1");
+	}
+
+	[Theory]
+	[InlineData ("v1")]
+	[InlineData ("v2")]
+	public async Task OpenApiDocument_ShouldBeAvailable_ForEachVersion (string version)
+	{
+		var client = _factory.CreateClient ();
+		var response = await client.GetAsync ($"/openApi/{version}.json");
+
+		Assert.Equal (HttpStatusCode.OK, response.StatusCode);
+
+		var content = await response.Content.ReadAsStringAsync ();
+		Assert.Contains ($"\"version\":\"{version}\"", content);
+	}
+
+	[Fact]
+	public void MinimalAndControllerEndpoints_ShouldBeGroupedByVersion_V1 ()
+	{
+		var versions = _provider.ApiVersionDescriptions.Select (d => d.GroupName).ToList ();
+
+		// Expect both v1 and v2 groups.
+		Assert.Contains ("v1", versions);
+		Assert.Contains ("v2", versions);
+	}
+
+	// The actual comparison is manual. Alternatively, you can check that the discovered Version Groups are not empty...
+
+	[Fact]
+	public void MinimalAndControllerEndpoints_ShouldBeGroupedByVersion_V2 ()
+	{
+		var versions = _provider.ApiVersionDescriptions.Select (d => d.GroupName).ToList ();
+
+		Assert.All (versions, groupName => Assert.False (string.IsNullOrWhiteSpace(groupName)));
+	}
+
+	// Alternatively, the test will fail if a new Version Group are discovered...
+
+	[Fact]
+	public void MinimalAndControllerEndpoints_ShouldBeGroupedByVersion_V3 ()
+	{
+		string[] expectedVersions = [ "v1", "v2" ]; // Update this when you add a new version
+
+		var actualVersions = _provider.ApiVersionDescriptions.Select(d => d.GroupName).ToArray();
+
+		Assert.Equal(expectedVersions, actualVersions);
+	}
+}
+```
+
+> 💡 Tip: You can also use this provider to dynamically seed test cases for example, instead of hardcoding tests for `v1` or `v2`, loop over all discovered versions to generate test data on-the-fly. This approach helps prevent version drift in your test suite. Additionally, the provider can be used to locate version-specific OpenAPI documents, which can then be consumed by `Swagger UI` or `Scalar` tooling to scaffold client SDKs. It also aids in validating rollout strategies such as ensuring deprecated versions are flagged or confirming new versions are correctly registered and exposed.
+
+> 💡 Tip: Ensure these tests run after the service provider is fully built, such as within an integration test using a custom host or a framework like `WebApplicationFactory`. Attempting to resolve this provider during registration will result in a runtime error, as version metadata isn’t available until the full DI container is constructed.
+
+### 📄 Keep XML Comments Version-Aware with IncludeXmlComments()
+
+When using `IncludeXmlComments()` to enrich your OpenAPI documentation via OpenAPI or Swashbuckle, it's important to ensure your XML comment file reflects behavior changes introduced across different API versions. ASP.NET Core supports generating XML documentation by enabling `<GenerateDocumentationFile>true</GenerateDocumentationFile>` in the project file. Swashbuckle can then consume this output to populate metadata fields like summaries, descriptions, and remarks in OpenAPI documents.
+
+#### ⚠️ Gotchas to watch for
+
+- If you modify controller actions or models between versions, outdated XML comments may still appear in the generated documentation unless explicitly updated.
+- Applying `<inheritdoc/>` across versions can lead to misleading summaries when behavior diverges in later releases.
+- Consumers may rely on OpenAPI metadata to understand endpoint behavior so discrepancies in XML comments can cause confusion and misuse.
+
+#### ✅ Best Practices
+
+- Annotate version-specific methods with custom summaries that reflect their versioned behavior. Avoid reusing inherited comments blindly unless the method's intent truly hasn’t changed.
+- Use `<inheritdoc/>` only when the behavior remains consistent across versions otherwise, prefer fresh comments to prevent accidental mismatches.
+- If using multiple XML documentation files per version group, organize them clearly and apply them selectively to each OpenAPI document generated by Swashbuckle.
+- Add version context in remarks or description tags to help consumers identify versioned behavior:
+
+```xml
+///	<summary>
+///		Gets a user by ID.
+///	</summary>
+///	<remarks>
+///		This version applies to v2 and introduces role-based filtering.
+///	</remarks>
+```
+
+### 🔄 Endpoint re-registration during version migration
+
+When migrating from attribute-based routing (typically via Controllers) to Minimal APIs, it's important to review how endpoints are registered across versions. If endpoint mappings are reused without clear separation, they may **collide, override, or shadow one another silently**, especially when both paradigms co-exist temporarily.
+
+#### ⚠️ Gotchas to watch for
+
+- If both Controller and Minimal API endpoints are mapped to the same route (e.g., `/users`), one may override the other depending on registration order and grouping.
+- Using identical route templates across versions without grouping (e.g., `MapGet("/users")` in both `v1` and `v2`) can result in unexpected routing or missing documentation.
+- Minimal APIs **do not inherit** version metadata automatically. To ensure correct OpenAPI document generation and routing behavior, use `.WithApiVersionSet(...)` either on the route group or on the endpoint and `.HasApiVersion(...)` on individual endpoints inside that group.
+
+#### ✅ Best Practices
+
+- Use `MapGroup("/vX")` to segment Minimal API endpoints by version, and pair it with `WithApiVersionSet(...)` to ensure proper grouping.
+- If retiring legacy controller routes, deregister or isolate them via conditional compilation to avoid overlapping behavior.
+- Keep route definitions **predictable and version-scoped**:
+
+```csharp
+var v1 = app.MapGroup("/v1")
+	.WithApiVersionSet(v1Set);
+
+var v2 = app.MapGroup("/v2")
+	.WithApiVersionSet(v2Set);
+
+v1.MapGet("/users", ...); // v1 definition
+v2.MapGet("/users", ...); // v2 definition
+```
+
+> 💡 Tip: During version migration, prefer explicit registration over inferred routing. A mismatch between endpoints and their API version metadata may lead to incomplete OpenAPI documents or user-facing inconsistencies.
+
+### 🧷 Use `AssumeDefaultVersionWhenUnspecified = true` wisely
+
+ASP.NET Core API Versioning allows you to set `AssumeDefaultVersionWhenUnspecified = true`, which routes incoming requests to a fallback version when no explicit version is provided. While helpful for backward compatibility, this option can also introduces silent routing behaviors that are difficult to detect.
+
+#### ⚠️ Gotchas to watch for
+
+- Requests lacking a version may unexpectedly hit **deprecated** or **outdated** endpoints if the default isn’t kept in sync.
+- If you promote `v2` but leave `v1` as the default, version-less clients/requests may continue consuming legacy logic even if `v2` is intended as the current target.
+- OpenAPI documents do not encode fallback routing behavior. Consumers inspecting version-specific specs may be unaware that unversioned requests are routed to a fallback version via `AssumeDefaultVersionWhenUnspecified = true`. Make this behavior explicit through endpoint summaries, release notes, or your external API documentation.
+
+#### ✅ Best Practices
+
+- Set the default version thoughtfully based on lifecycle stage, not simply the oldest version:
+
+```csharp
+options.DefaultApiVersion = new ApiVersion(2, 0); // ✅ Prefer current default
+options.AssumeDefaultVersionWhenUnspecified = true;
+```
+
+- Since OpenAPI documents are scoped per version, fallback routing behavior is not encoded in the specification. Consumers inspecting version-specific specs may assume version declarations are required, even if `AssumeDefaultVersionWhenUnspecified = true` is enabled. To avoid ambiguity, clarify fallback logic through endpoint remarks, release notes, or external documentation.
+- Include `ReportApiVersions = true` to expose available and deprecated versions in response headers.
+- If multiple consumers rely on different versions, consider enforcing version declaration via validation middleware instead of assuming defaults silently.
+
+> 💡 Tip: A default version is not just a technical fallback, it's a statement of support. Treat it like part of your contract, and revisit it every time you publish a new version.
 
 ## 📚 References
 
